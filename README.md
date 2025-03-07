@@ -3,4 +3,5 @@
 
 Схема базы данных выглядит следующим образом:
 
-![DataBase](https://github.com/user-attachments/assets/37516281-ce77-43f4-a8bb-45eaf51fb769)
+![DataBase3](https://github.com/user-attachments/assets/1b7e63cc-fee8-418e-b326-1720b0eef792)
+
