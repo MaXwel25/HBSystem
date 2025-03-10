@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="media/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Looking-hotel</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <img src="media/Looking-hotel.png" alt="Логотип">
+        <h1>Looking-hotel - лучший сайт для бронирования отелей!</h1>
+        <div id="auth">
+            <button @click="goToLogin">Войти</button>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html"><i class="fas fa-home"></i> Главная</a></li>
+                <li><a href="#" @click="showModal"><i class="fas fa-hotel"></i> Бронь отеля</a></li>
+                <li><a href="#" @click="showModal"><i class="fas fa-utensils"></i> Бронь столика</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <!-- Секция с отелями -->
+    <section id="hotels">
+        <h2>Доступные отели</h2>
+        <div class="hotel-carousel">
+            <button class="carousel-button prev" @click="prevHotel" :disabled="currentHotelIndex === 0">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <div class="hotel-item" v-for="(hotel, index) in hotels" :key="hotel.id" v-show="index === currentHotelIndex">
+                <h3>{{ hotel.name }}</h3>
+                <div class="hotel-images">
+                    <div class="image-container">
+                        <img :src="hotel.images[0]" alt="Люкс">
+                        <p class="image-caption">Люкс</p>
+                    </div>
+                    <div class="image-container">
+                        <img :src="hotel.images[1]" alt="Эконом">
+                        <p class="image-caption">Эконом</p>
+                    </div>
+                </div>
+                <p>{{ hotel.description }}</p>
+                <h4>Свободные номера:</h4>
+                <ul>
+                    <li v-for="room in hotel.rooms" :key="room.type">
+                        {{ room.type }} - {{ room.price }} руб/ночь
+                    </li>
+                </ul>
+                <button @click="showModal">Забронировать</button>
+            </div>
+            <button class="carousel-button next" @click="nextHotel" :disabled="currentHotelIndex === hotels.length - 1">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </section>
+
+    <!-- Модальное окно -->
+    <div class="modal" v-if="isModalVisible">
+        <div class="modal-content">
+            <span class="close" @click="closeModal">&times;</span>
+            <h2>Для бронирования необходимо зарегистрироваться</h2>
+            <button @click="goToRegister">Зарегистрироваться</button>
+        </div>
+    </div>
+    
+    <script src="https://unpkg.com/vue@3"></script>
+    <script src="app.js"></script>
+</body>
+</html>
