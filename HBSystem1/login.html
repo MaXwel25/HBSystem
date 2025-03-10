@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="media/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Авторизация</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <img src="media/Looking-hotel.png" alt="Логотип">
+        <h1>Looking-hotel - лучший сайт для бронирования отелей!</h1>
+        <div id="auth">
+            <button @click="goToRegister">Зарегистрироваться</button>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html"><i class="fas fa-home"></i> Главная</a></li>
+                <li><a href="#" @click="showModal"><i class="fas fa-hotel"></i> Бронь отеля</a></li>
+                <li><a href="#" @click="showModal"><i class="fas fa-utensils"></i> Бронь столика</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="login">
+        <div class="login-container">
+            <h2>Авторизация</h2>
+            <form @submit.prevent="submitForm">
+                <div class="form-group">
+                    <label for="username">Логин или почта</label>
+                    <input type="text" id="username" placeholder="Введите ваш логин или почту" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Пароль</label>
+                    <input type="password" id="password" placeholder="Введите ваш пароль" required>
+                </div>
+                <button type="submit" class="login-button">Войти</button>
+            </form>
+        </div>
+    </section>
+
+    <script src="https://unpkg.com/vue@3"></script>
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            methods: {
+                goToRegister() {
+                    window.location.href = 'register.html';
+                },
+                submitForm() {
+                    alert('Вход выполнен успешно!');
+                    window.location.href = 'index.html';
+                }
+            }
+        }).mount('body');
+    </script>
+</body>
+</html>

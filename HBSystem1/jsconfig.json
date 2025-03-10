@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "baseUrl": ".",
+    "paths": {
+      "vue": ["./node_modules/@vue/runtime-dom/dist/runtime-dom.esm-bundler.js"]
+    }
+  },
+  "exclude": ["node_modules"]
+}
