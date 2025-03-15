@@ -1,6 +1,6 @@
 const { createApp } = Vue;
 
-createApp({
+const app = createApp({
     data() {
         return {
             isModalVisible: false,
@@ -69,4 +69,6 @@ createApp({
             this.slideDirection = newIndex > oldIndex ? 'slide-left' : 'slide-right';
         }
     }
-}).mount('body');
+});
+
+app.mount('body');
