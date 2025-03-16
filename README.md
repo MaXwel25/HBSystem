@@ -1,6 +1,6 @@
 Тема: Система бронирования отелей
 
 База данных проекта
-![DataBase3](https://github.com/user-attachments/assets/1d73e0fd-ec2e-42f6-94da-57968bfa6b4f)
+![DataBase16 03](https://github.com/user-attachments/assets/f7d581ae-a6a1-43f2-817b-b4fa67fb1793)
 
 Сайт находится по адрессу: https://maxwel25.github.io/HBSystem/HBSystem
