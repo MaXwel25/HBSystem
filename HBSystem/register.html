@@ -13,13 +13,13 @@
         <img src="media/Looking-hotel.png" alt="Логотип">
         <h1>Looking-hotel - лучший сайт для бронирования отелей!</h1>
         <div id="auth">
-            <button @click="goToLogin">Войти</button>
+            <button id="auth-button">Войти</button>
         </div>
         <nav>
             <ul>
                 <li><a href="index.html"><i class="fas fa-home"></i> Главная</a></li>
-                <li><a href="#" @click="showModal"><i class="fas fa-hotel"></i> Бронь отеля</a></li>
-                <li><a href="#" @click="showModal"><i class="fas fa-map-marked-alt"></i> Бронь экскурсии</a></li>
+                <li><a href="#" id="book-hotel"><i class="fas fa-hotel"></i> Бронь отеля</a></li>
+                <li><a href="#" id="book-excursion"><i class="fas fa-map-marked-alt"></i> Бронь экскурсии</a></li>
             </ul>
         </nav>
     </header>
@@ -27,7 +27,7 @@
     <section id="register">
         <div class="register-container">
             <h2>Регистрация</h2>
-            <form @submit.prevent="submitForm">
+            <form id="register-form">
                 <div class="form-group">
                     <label for="fullname">ФИО</label>
                     <input type="text" id="fullname" placeholder="Введите ваше ФИО" required>
@@ -57,21 +57,59 @@
         </div>
     </section>
 
-    <script src="https://unpkg.com/vue@3"></script>
     <script>
-        const { createApp } = Vue;
-
-        createApp({
-            methods: {
-                goToLogin() {
-                    window.location.href = 'login.html';
-                },
-                submitForm() {
+        document.getElementById('register-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Собираем данные формы
+            const formData = {
+                fullname: document.getElementById('fullname').value,
+                phone: document.getElementById('phone').value,
+                dob: document.getElementById('dob').value,
+                email: document.getElementById('email').value,
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value
+            };
+            
+            try {
+                // Отправляем данные на сервер
+                const response = await fetch('http://localhost:3000/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
                     alert('Регистрация прошла успешно!');
                     window.location.href = 'index.html';
+                } else {
+                    alert(data.error || 'Ошибка регистрации');
                 }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('Произошла ошибка при отправке данных');
             }
-        }).mount('body');
+        });
+
+        // Обработка кнопки "Войти"
+        document.getElementById('auth-button').addEventListener('click', function() {
+            window.location.href = 'login.html';
+        });
+
+        // Обработка кнопок бронирования (пока просто показываем alert)
+        document.getElementById('book-hotel').addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('Для бронирования отеля необходимо авторизоваться');
+        });
+
+        document.getElementById('book-excursion').addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('Для бронирования экскурсии необходимо авторизоваться');
+        });
     </script>
 </body>
 </html>
