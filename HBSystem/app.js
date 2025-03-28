@@ -37,7 +37,7 @@ const app = createApp({
                     ]
                 }
             ],
-            slideDirection: 'slide-left' // Направление анимации по умолчанию
+            slideDirection: 'slide-left'
         };
     },
     methods: {

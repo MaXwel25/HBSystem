@@ -61,7 +61,6 @@
         document.getElementById('register-form').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            // Собираем данные формы
             const formData = {
                 fullname: document.getElementById('fullname').value,
                 phone: document.getElementById('phone').value,
@@ -72,27 +71,23 @@
             };
             
             try {
-                // Отправляем данные на сервер
-                const response = await fetch('http://localhost:3000/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData)
-                });
-                
-                const data = await response.json();
-                
-                if (response.ok) {
-                    alert('Регистрация прошла успешно!');
-                    window.location.href = 'index.html';
-                } else {
-                    alert(data.error || 'Ошибка регистрации');
-                }
-            } catch (error) {
-                console.error('Ошибка:', error);
-                alert('Произошла ошибка при отправке данных');
-            }
+    const response = await fetch('http://localhost:3000/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+    });
+
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Ошибка регистрации: ${text}`);
+    }
+    const data = await response.json();
+    alert('Регистрация прошла успешно!');
+    window.location.href = 'index.html';
+} catch (error) {
+    console.error('Ошибка:', error);
+    alert('Произошла ошибка при отправке данных: ' + error.message);
+}
         });
 
         // Обработка кнопки "Войти"
