@@ -13,13 +13,13 @@
         <img src="media/Looking-hotel.png" alt="Логотип">
         <h1>Looking-hotel - лучший сайт для бронирования отелей!</h1>
         <div id="auth">
-            <button @click="goToRegister">Зарегяистрироваться</button>
+            <button onclick="window.location.href='register.html'">Зарегистрироваться</button>
         </div>
         <nav>
             <ul>
                 <li><a href="index.html"><i class="fas fa-home"></i> Главная</a></li>
-                <li><a href="#" @click="showModal"><i class="fas fa-hotel"></i> Бронь отеля</a></li>
-                <li><a href="#" @click="showModal"><i class="fas fa-map-marked-alt"></i> Бронь экскурсии</a></li>
+                <li><a href="#" onclick="alert('Требуется авторизация')"><i class="fas fa-hotel"></i> Бронь отеля</a></li>
+                <li><a href="#" onclick="alert('Требуется авторизация')"><i class="fas fa-map-marked-alt"></i> Бронь экскурсии</a></li>
             </ul>
         </nav>
     </header>
@@ -27,7 +27,7 @@
     <section id="login">
         <div class="login-container">
             <h2>Авторизация</h2>
-            <form @submit.prevent="submitForm">
+            <form id="login-form">
                 <div class="form-group">
                     <label for="username">Логин или почта</label>
                     <input type="text" id="username" placeholder="Введите ваш логин или почту" required>
@@ -41,21 +41,33 @@
         </div>
     </section>
 
-    <script src="https://unpkg.com/vue@3"></script>
     <script>
-        const { createApp } = Vue;
-
-        createApp({
-            methods: {
-                goToRegister() {
-                    window.location.href = 'register.html';
-                },
-                submitForm() {
-                    alert('Вход выполнен успешно!');
-                    window.location.href = 'index.html';
-                }
+        document.getElementById('login-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+    
+            const formData = {
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value
+            };
+    
+            try {
+                const response = await fetch('http://localhost:3000/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message);
+                
+                localStorage.setItem('token', data.token);
+                alert('Вход выполнен успешно!');
+                window.location.href = 'profile.html';
+            } catch (error) {
+                alert('Ошибка: ' + error.message);
             }
-        }).mount('body');
+        });
     </script>
+    
 </body>
 </html>

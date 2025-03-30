@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="media/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <img src="media/Looking-hotel.png" alt="Логотип">
+        <h1>Личный кабинет</h1>
+        <button id="logout-button">Выйти</button>
+    </header>
+    <section id="profile">
+        <h2>Профиль</h2>
+        <p><strong>ФИО:</strong> <span id="fullname"></span></p>
+        <p><strong>Дата рождения:</strong> <span id="dob"></span></p>
+        <p><strong>Почта:</strong> <span id="email"></span></p>
+        <p><strong>Телефон:</strong> <span id="phone"></span></p>
+    </section>
+    <script>
+        async function fetchProfile() {
+            const token = localStorage.getItem('token');
+            if (!token) return window.location.href = 'login.html';
+
+            try {
+                const response = await fetch('http://localhost:3000/profile', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!response.ok) throw new Error('Ошибка загрузки профиля');
+                const data = await response.json();
+                document.getElementById('fullname').textContent = data.fullname;
+                document.getElementById('dob').textContent = data.dataofbirth;
+                document.getElementById('email').textContent = data.email;
+                document.getElementById('phone').textContent = data.phone;
+            } catch (error) {
+                alert(error.message);
+                window.location.href = 'login.html';
+            }
+        }
+
+        document.getElementById('logout-button').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            window.location.href = 'login.html';
+        });
+
+        fetchProfile();
+    </script>
+</body>
+</html>
