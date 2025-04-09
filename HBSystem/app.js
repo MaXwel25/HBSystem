@@ -1,10 +1,12 @@
 const { createApp } = Vue;
 
 const app = createApp({
-    data() {
+    data()
+    {
         return {
             isModalVisible: false,
             currentHotelIndex: 0,
+            isAuthenticated: false,
             hotels: [
                 {
                     id: 1,
@@ -40,32 +42,58 @@ const app = createApp({
             slideDirection: 'slide-left'
         };
     },
-    methods: {
-        showModal() {
+    methods:
+    {
+        showModal()
+        {
             this.isModalVisible = true;
         },
-        closeModal() {
+        closeModal()
+        {
             this.isModalVisible = false;
         },
-        goToRegister() {
+        goToRegister()
+        {
             window.location.href = 'register.html';
         },
-        goToLogin() {
+        goToLogin()
+        {
             window.location.href = 'login.html';
         },
-        prevHotel() {
-            if (this.currentHotelIndex > 0) {
+        prevHotel()
+        {
+            if (this.currentHotelIndex > 0)
                 this.currentHotelIndex--;
-            }
         },
-        nextHotel() {
-            if (this.currentHotelIndex < this.hotels.length - 1) {
+        nextHotel()
+        {
+            if (this.currentHotelIndex < this.hotels.length - 1)
                 this.currentHotelIndex++;
-            }
+        },
+        checkAuth()
+        {
+            const token = localStorage.getItem("token");
+            const user = localStorage.getItem("loggedInUser");
+
+            this.isAuthenticated = !!(token && user);
+        },
+        goToProfile()
+        {
+            const user = localStorage.getItem("loggedInUser");
+            if (user)
+                window.location.href = 'profile.html';
+            else
+                window.location.href = 'login.html';
         }
     },
-    watch: {
-        currentHotelIndex(newIndex, oldIndex) {
+    created()
+    {
+        this.checkAuth();
+    },
+    watch:
+    {
+        currentHotelIndex(newIndex, oldIndex)
+        {
             this.slideDirection = newIndex > oldIndex ? 'slide-left' : 'slide-right';
         }
     }

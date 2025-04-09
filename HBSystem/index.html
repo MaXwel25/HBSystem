@@ -15,9 +15,11 @@
         <img src="media/Looking-hotel.png" alt="Логотип">
         <h1>Looking-hotel - лучший сайт для бронирования отелей!</h1>
         <div id="auth">
-            <button @click="goToLogin">Войти</button>
-            <button @click="goToRegister">Зарегистрироваться</button>
+            <button v-if="!isAuthenticated" @click="goToLogin">Войти</button>
+            <button v-if="!isAuthenticated" @click="goToRegister">Зарегистрироваться</button>
+            <button v-if="isAuthenticated" @click="goToProfile">Личный кабинет</button>
         </div>
+        
         <nav>
             <ul>
                 <li><a href="index.html"><i class="fas fa-home"></i> Главная</a></li>

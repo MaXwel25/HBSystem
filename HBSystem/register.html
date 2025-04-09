@@ -9,101 +9,113 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <header>
-        <img src="media/Looking-hotel.png" alt="Логотип">
-        <h1>Looking-hotel - лучший сайт для бронирования отелей!</h1>
-        <div id="auth">
-            <button id="auth-button">Войти</button>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="index.html"><i class="fas fa-home"></i> Главная</a></li>
-                <li><a href="#" id="book-hotel"><i class="fas fa-hotel"></i> Бронь отеля</a></li>
-                <li><a href="#" id="book-excursion"><i class="fas fa-map-marked-alt"></i> Бронь экскурсии</a></li>
-            </ul>
-        </nav>
-    </header>
+    <div id="app">
+        <header>
+            <img src="media/Looking-hotel.png" alt="Логотип">
+            <h1>Looking-hotel - лучший сайт для бронирования отелей!</h1>
+            <div id="auth">
+                <button @click="redirectToLogin">Войти</button>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-home"></i> Главная</a></li>
+                    <li><a href="#" @click="showModal"><i class="fas fa-hotel"></i> Бронь отеля</a></li>
+                    <li><a href="#" @click="showModal"><i class="fas fa-map-marked-alt"></i> Бронь экскурсии</a></li>
+                </ul>
+            </nav>
+        </header>
 
-    <section id="register">
-        <div class="register-container">
-            <h2>Регистрация</h2>
-            <form id="register-form">
-                <div class="form-group">
-                    <label for="fullname">ФИО</label>
-                    <input type="text" id="fullname" placeholder="Введите ваше ФИО" required>
-                </div>
-                <div class="form-group">
-                    <label for="phone">Номер телефона</label>
-                    <input type="tel" id="phone" placeholder="Введите ваш номер телефона" required>
-                </div>
-                <div class="form-group">
-                    <label for="dob">Дата рождения</label>
-                    <input type="date" id="dob" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Почта</label>
-                    <input type="email" id="email" placeholder="Введите вашу почту" required>
-                </div>
-                <div class="form-group">
-                    <label for="username">Логин</label>
-                    <input type="text" id="username" placeholder="Придумайте логин" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">Пароль</label>
-                    <input type="password" id="password" placeholder="Придумайте пароль" required>
-                </div>
-                <button type="submit" class="register-button">Зарегистрироваться</button>
-            </form>
-        </div>
-    </section>
+        <section id="register">
+            <div class="register-container">
+                <h2>Регистрация</h2>
+                <form @submit.prevent="registerUser">
+                    <div class="form-group">
+                        <label for="fullname">ФИО</label>
+                        <input type="text" v-model="fullname" placeholder="Введите ваше ФИО" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Номер телефона</label>
+                        <input type="tel" v-model="phone" placeholder="Введите ваш номер телефона" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dob">Дата рождения</label>
+                        <input type="date" v-model="dob" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Почта</label>
+                        <input type="email" v-model="email" placeholder="Введите вашу почту" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="username">Логин</label>
+                        <input type="text" v-model="username" placeholder="Придумайте логин" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Пароль</label>
+                        <input type="password" v-model="password" placeholder="Придумайте пароль" required>
+                    </div>
+                    <button type="submit" class="register-button">Зарегистрироваться</button>
+                </form>
+            </div>
+        </section>
 
+        <div class="modal" v-if="isModalVisible">
+            <div class="modal-content">
+                <h2>Для бронирования необходимо авторизоваться</h2>
+                <button @click="redirectToLogin">Войти</button>
+                <button class="close" @click="closeModal">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
     <script>
-        document.getElementById('register-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const formData = {
-                fullname: document.getElementById('fullname').value,
-                phone: document.getElementById('phone').value,
-                dob: document.getElementById('dob').value,
-                email: document.getElementById('email').value,
-                username: document.getElementById('username').value,
-                password: document.getElementById('password').value
-            };
-            
-            try {
-    const response = await fetch('http://localhost:3000/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-    });
-
-    if (!response.ok) {
-        const text = await response.text();
-        throw new Error(`Ошибка регистрации: ${text}`);
-    }
-    const data = await response.json();
-    alert('Регистрация прошла успешно!');
-    window.location.href = 'index.html';
-} catch (error) {
-    console.error('Ошибка:', error);
-    alert('Произошла ошибка при отправке данных: ' + error.message);
-}
-        });
-
-        // Обработка кнопки "Войти"
-        document.getElementById('auth-button').addEventListener('click', function() {
-            window.location.href = 'login.html';
-        });
-
-        // Обработка кнопок бронирования (пока просто показываем alert)
-        document.getElementById('book-hotel').addEventListener('click', function(e) {
-            e.preventDefault();
-            alert('Для бронирования отеля необходимо авторизоваться');
-        });
-
-        document.getElementById('book-excursion').addEventListener('click', function(e) {
-            e.preventDefault();
-            alert('Для бронирования экскурсии необходимо авторизоваться');
+        new Vue({
+            el: '#app',
+            data: {
+                fullname: '',
+                phone: '',
+                dob: '',
+                email: '',
+                username: '',
+                password: '',
+                isModalVisible: false
+            },
+            methods: {
+                async registerUser() {
+                    try {
+                        const response = await fetch('http://localhost:3000/register', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                fullname: this.fullname,
+                                phone: this.phone,
+                                dob: this.dob,
+                                email: this.email,
+                                username: this.username,
+                                password: this.password
+                            })
+                        });
+                        if (!response.ok) {
+                            const text = await response.text();
+                            throw new Error(`Ошибка регистрации: ${text}`);
+                        }
+                        alert('Регистрация прошла успешно!');
+                        window.location.href = 'index.html';
+                    } catch (error) {
+                        console.error('Ошибка:', error);
+                        alert('Произошла ошибка при отправке данных: ' + error.message);
+                    }
+                },
+                redirectToLogin() {
+                    window.location.href = 'login.html';
+                },
+                showModal() {
+                    this.isModalVisible = true;
+                },
+                closeModal() {
+                    this.isModalVisible = false;
+                }
+            }
         });
     </script>
 </body>
