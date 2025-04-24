@@ -166,3 +166,19 @@ ALTER TABLE ONLY public."Bookings_services"
 
 ALTER TABLE ONLY public."History"
     ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES public."Users"(user_id);
+
+
+
+
+INSERT INTO "Hotels" (hotel_id, name, location, raiting) VALUES 
+(1, 'Москва', 'Центр', 4.5),
+(2, 'СПб', 'Исторический центр', 4.7),
+(3, 'Краснод', 'Центр', 4.3);
+
+INSERT INTO "Rooms" (room_id, hotel_id, roomcount, price, status, fridge, airconditioner, balcony) VALUES
+(1, 1, 10, 10000, 'Люкс', true, true, true),
+(2, 1, 20, 5000, 'Эконом', false, true, false),
+(3, 2, 15, 12000, 'Люкс', true, true, true),
+(4, 2, 25, 6000, 'Эконом', false, true, false),
+(5, 3, 8, 8000, 'Люкс', true, true, true),
+(6, 3, 15, 4000, 'Эконом', false, true, false);

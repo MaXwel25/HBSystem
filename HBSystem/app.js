@@ -1,102 +1,139 @@
-const { createApp } = Vue;
+const { createApp } = Vue
 
 const app = createApp({
-    data()
-    {
-        return {
-            isModalVisible: false,
-            currentHotelIndex: 0,
-            isAuthenticated: false,
-            hotels: [
-                {
-                    id: 1,
-                    name: 'Москва',
-                    images: ['media/hotel1.jpg', 'media/hotel2.jpg'],
-                    description: 'Отель в центре Москвы с прекрасным видом на Кремль.',
-                    rooms: [
-                        { type: 'Люкс', price: 10000 },
-                        { type: 'Эконом', price: 5000 }
-                    ]
-                },
-                {
-                    id: 2,
-                    name: 'Санкт-Петербург',
-                    images: ['media/hotel3.jpg', 'media/hotel4.jpg'],
-                    description: 'Отель в историческом центре Санкт-Петербурга.',
-                    rooms: [
-                        { type: 'Люкс', price: 12000 },
-                        { type: 'Эконом', price: 6000 }
-                    ]
-                },
-                {
-                    id: 3,
-                    name: 'Краснодар',
-                    images: ['media/hotel5.jpg', 'media/hotel6.jpg'],
-                    description: 'Отель в центре Краснодара с современным дизайном.',
-                    rooms: [
-                        { type: 'Люкс', price: 8000 },
-                        { type: 'Эконом', price: 4000 }
-                    ]
-                }
-            ],
-            slideDirection: 'slide-left'
-        };
-    },
-    methods:
-    {
-        showModal()
+  data()
+  {
+    return {
+      isMod: false,
+      curHI: 0,
+      isAuth: false,
+      bk: { hotel: null, room: null, date: null },
+      hotels: [
         {
-            this.isModalVisible = true;
+          id: 1,
+          name: 'Москва',
+          images: ['media/hotel1.jpg', 'media/hotel2.jpg'],
+          descr: 'Отель в центре Москвы с прекрасным видом на Кремль.',
+          rooms: [
+            { type: 'Люкс', price: 10000 },
+            { type: 'Эконом', price: 5000 }
+          ]
         },
-        closeModal()
         {
-            this.isModalVisible = false;
+          id: 2,
+          name: 'СПб',
+          images: ['media/hotel3.jpg', 'media/hotel4.jpg'],
+          descr: 'Отель в историческом центре Санкт-Петербурга.',
+          rooms: [
+            { type: 'Люкс', price: 12000 },
+            { type: 'Эконом', price: 6000 }
+          ]
         },
-        goToRegister()
         {
-            window.location.href = 'register.html';
-        },
-        goToLogin()
-        {
-            window.location.href = 'login.html';
-        },
-        prevHotel()
-        {
-            if (this.currentHotelIndex > 0)
-                this.currentHotelIndex--;
-        },
-        nextHotel()
-        {
-            if (this.currentHotelIndex < this.hotels.length - 1)
-                this.currentHotelIndex++;
-        },
-        checkAuth()
-        {
-            const token = localStorage.getItem("token");
-            const user = localStorage.getItem("loggedInUser");
-
-            this.isAuthenticated = !!(token && user);
-        },
-        goToProfile()
-        {
-            const user = localStorage.getItem("loggedInUser");
-            if (user)
-                window.location.href = 'profile.html';
-            else
-                window.location.href = 'login.html';
+          id: 3,
+          name: 'Краснод',
+          images: ['media/hotel5.jpg', 'media/hotel6.jpg'],
+          descr: 'Отель в центре Краснодара с современным дизайном.',
+          rooms: [
+            { type: 'Люкс', price: 8000 },
+            { type: 'Эконом', price: 4000 }
+          ]
         }
-    },
-    created()
-    {
-        this.checkAuth();
-    },
-    watch:
-    {
-        currentHotelIndex(newIndex, oldIndex)
-        {
-            this.slideDirection = newIndex > oldIndex ? 'slide-left' : 'slide-right';
-        }
+      ],
+      slideDir: 'slide-left'
     }
-});
+  },
+  computed:
+  {
+    curHotelRooms()
+    {
+      const hid = this.hotels[this.curHI].id
+      if (this.bk.hotel === null)
+        this.bk.hotel = hid
+      if (this.bk.hotel === hid)
+        return this.hotels[this.curHI].rooms
+      const ht = this.hotels.find(item => item.id === this.bk.hotel)
+      return ht ? ht.rooms : []
+    }
+  },
+  methods:
+  {
+    openModal()
+    {
+      this.isMod = true
+    },
+    closeModal()
+    {
+      this.isMod = false
+    },
+    goToRegister()
+    {
+      window.location.href = 'register.html'
+    },
+    goToLogin()
+    {
+      window.location.href = 'login.html'
+    },
+    goToProf()
+    {
+      window.location.href = 'profile.html'
+    },
+    prevHotel()
+    {
+      if (this.curHI > 0)
+        this.curHI--
+    },
+    nextHotel()
+    {
+      if (this.curHI < this.hotels.length - 1)
+        this.curHI++
+    },
+    checkAuth()
+    {
+      const tk = localStorage.getItem("token")
+      const usr = localStorage.getItem("loggedInUser")
+      this.isAuth = !!(tk && usr)
+    },
+    async bookHotel()
+    {
+      if (!this.bk.date || !this.bk.room || !this.bk.hotel)
+        return alert("Заполните все поля")
+      try
+      {
+        const tk = localStorage.getItem("token")
+        const res = await fetch("http://localhost:3000/bookHotel",
+        {
+          method: "POST",
+          headers:
+          {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + tk
+          },
+          body: JSON.stringify(this.bk)
+        })
+        const data = await res.json()
+        if (res.ok)
+          alert(data.msg)
+        else
+          alert(data.msg)
+      }
+      catch (e)
+      {
+        alert("Ошибка")
+      }
+    }
+  },
+  created()
+  {
+    this.checkAuth()
+  },
+  watch:
+  {
+    curHI(newI, oldI)
+    {
+      this.slideDir = newI > oldI ? 'slide-left' : 'slide-right'
+    }
+  }
+})
 
-app.mount('body');
+app.mount('body')
