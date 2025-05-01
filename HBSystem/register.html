@@ -7,6 +7,17 @@
     <title>Регистрация</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .error-message {
+            font-family: Arial, sans-serif;
+            color: red;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        input.invalid {
+            border-color: red;
+        }
+    </style>
 </head>
 <body>
     <div id="app">
@@ -31,19 +42,23 @@
                 <form @submit.prevent="registerUser">
                     <div class="form-group">
                         <label for="fullname">ФИО</label>
-                        <input type="text" v-model="fullname" placeholder="Введите ваше ФИО" required>
+                        <input type="text" v-model="fullname" @blur="validateFullName" placeholder="Введите ваше ФИО" required>
+                        <div class="error-message" v-if="errors.fullname">{{ errors.fullname }}</div>
                     </div>
                     <div class="form-group">
                         <label for="phone">Номер телефона</label>
-                        <input type="tel" v-model="phone" placeholder="Введите ваш номер телефона" required>
+                        <input type="tel" v-model="phone" @blur="validatePhone" placeholder="Введите ваш номер телефона" required>
+                        <div class="error-message" v-if="errors.phone">{{ errors.phone }}</div>
                     </div>
                     <div class="form-group">
                         <label for="dob">Дата рождения</label>
-                        <input type="date" v-model="dob" required>
+                        <input type="date" v-model="dob" @change="validateDob" required>
+                        <div class="error-message" v-if="errors.dob">{{ errors.dob }}</div>
                     </div>
                     <div class="form-group">
                         <label for="email">Почта</label>
-                        <input type="email" v-model="email" placeholder="Введите вашу почту" required>
+                        <input type="email" v-model="email" @blur="validateEmail" placeholder="Введите вашу почту" required>
+                        <div class="error-message" v-if="errors.email">{{ errors.email }}</div>
                     </div>
                     <div class="form-group">
                         <label for="username">Логин</label>
@@ -51,9 +66,10 @@
                     </div>
                     <div class="form-group">
                         <label for="password">Пароль</label>
-                        <input type="password" v-model="password" placeholder="Придумайте пароль" required>
+                        <input type="password" v-model="password" @blur="validatePassword" placeholder="Придумайте пароль" required>
+                        <div class="error-message" v-if="errors.password">{{ errors.password }}</div>
                     </div>
-                    <button type="submit" class="register-button">Зарегистрироваться</button>
+                    <button type="submit" class="register-button" :disabled="!isFormValid">Зарегистрироваться</button>
                 </form>
             </div>
         </section>
@@ -78,12 +94,124 @@
                 email: '',
                 username: '',
                 password: '',
-                isModalVisible: false
+                isModalVisible: false,
+                errors: {
+                    fullname: '',
+                    phone: '',
+                    dob: '',
+                    email: '',
+                    password: ''
+                }
+            },
+            computed: {
+                isFormValid() {
+                    return this.fullname && 
+                           !this.errors.fullname && 
+                           this.phone && 
+                           !this.errors.phone && 
+                           this.dob && 
+                           !this.errors.dob && 
+                           this.email && 
+                           !this.errors.email && 
+                           this.username && 
+                           this.password && 
+                           !this.errors.password;
+                }
             },
             methods: {
+                validateFullName() {
+                    const nameParts = this.fullname.trim().split(/\s+/).filter(part => part.length > 0);
+                    
+                    if (nameParts.length === 0) {
+                        this.errors.fullname = 'Введите ФИО';
+                        return false;
+                    }
+                    
+                    for (const part of nameParts) {
+                        if (part.length < 2) {
+                            this.errors.fullname = 'Каждая часть имени должна содержать минимум 2 буквы';
+                            return false;
+                        }
+                        if (!/^[а-яА-ЯёЁa-zA-Z-]+$/.test(part)) {
+                            this.errors.fullname = 'Имя может содержать только буквы и дефисы';
+                            return false;
+                        }
+                    }
+                    
+                    this.errors.fullname = '';
+                    return true;
+                },
+                validatePhone() {
+                    const phoneRegex = /^(\+7|8)[0-9]{10}$/;
+                    const digitsOnly = this.phone.replace(/\D/g, '');
+                    
+                    if (digitsOnly.length === 11 && (digitsOnly.startsWith('7') || digitsOnly.startsWith('8'))) {
+                        this.errors.phone = '';
+                        return true;
+                    }
+                    this.errors.phone = 'Введите номер в формате +7XXXXXXXXXX или 8XXXXXXXXXX';
+                    return false;
+                },
+                validateDob() {
+                    if (!this.dob) {
+                        this.errors.dob = 'Введите дату рождения';
+                        return false;
+                    }
+                    
+                    const dobDate = new Date(this.dob);
+                    const today = new Date();
+                    let age = today.getFullYear() - dobDate.getFullYear();
+                    const monthDiff = today.getMonth() - dobDate.getMonth();
+                    
+                    // Проверяем, исполнилось ли уже 18 лет
+                    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dobDate.getDate())) {
+                        age--;
+                    }
+                    
+                    if (age < 18) {
+                        this.errors.dob = 'Вам должно быть не менее 18 лет';
+                        return false;
+                    }
+                    
+                    this.errors.dob = '';
+                    return true;
+                },
+                validateEmail() {
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(this.email)) {
+                        this.errors.email = 'Введите корректный email';
+                        return false;
+                    }
+                    this.errors.email = '';
+                    return true;
+                },
+                validatePassword() {
+                    if (this.password.length < 8) {
+                        this.errors.password = 'Пароль должен содержать минимум 8 символов';
+                        return false;
+                    }
+                    if (!/[!@#$%^&*(),.?":{}|<>]/.test(this.password)) {
+                        this.errors.password = 'Пароль должен содержать хотя бы один специальный символ';
+                        return false;
+                    }
+                    this.errors.password = '';
+                    return true;
+                },
                 async registerUser() {
+                    // Проверяем все поля перед отправкой
+                    const isFullNameValid = this.validateFullName();
+                    const isPhoneValid = this.validatePhone();
+                    const isDobValid = this.validateDob();
+                    const isEmailValid = this.validateEmail();
+                    const isPasswordValid = this.validatePassword();
+                    
+                    if (!isFullNameValid || !isPhoneValid || !isDobValid || !isEmailValid || !isPasswordValid) {
+                        alert('Пожалуйста, исправьте ошибки в форме');
+                        return;
+                    }
+                    
                     try {
-                        const response = await fetch('http://176.108.251.188:3000/register', {
+                        const response = await fetch('http://localhost:3000/register', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
@@ -95,10 +223,12 @@
                                 password: this.password
                             })
                         });
+                        
                         if (!response.ok) {
                             const text = await response.text();
                             throw new Error(`Ошибка регистрации: ${text}`);
                         }
+                        
                         alert('Регистрация прошла успешно!');
                         window.location.href = 'index.html';
                     } catch (error) {
