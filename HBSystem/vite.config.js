@@ -20,6 +20,7 @@ export default defineConfig({
     allowedHosts: [
       'looking-hotel.ru', 
       'www.looking-hotel.ru'
+    ]
   },
   build: {
     outDir: 'dist',
