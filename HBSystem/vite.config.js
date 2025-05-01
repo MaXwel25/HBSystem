@@ -17,7 +17,9 @@ export default defineConfig({
     host: '0.0.0.0', // Доступ с любого IP
     port: 5173,
     strictPort: true, // Запрет автоматического выбора порта
-    allowedHosts: 'looking-hotel.ru'
+    allowedHosts: [
+      'looking-hotel.ru', 
+      'www.looking-hotel.ru'
   },
   build: {
     outDir: 'dist',
